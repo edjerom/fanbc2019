@@ -1,7 +1,9 @@
 const fs = require('fs')
+const transaction = require('./transaction')
 
 module.exports = class {
-    constructor(){
+    constructor(ds){
+        this.ds = ds
         this.init();
     }
 
@@ -80,11 +82,9 @@ module.exports = class {
             return false;
         }
 
-        var ctr = require(this.adr_ena(tx.cid))
-        console.log('ctr=', ctr);
+        var dsnode = this.ds.node(tx.cid)
 
-        // Do tx
-        ctr(...tx.args);
+        transaction(this.adr_ena(tx.cid), tx.args, dsnode)
 
         fs.renameSync(this.adr_tx(id), this.adr_txd(id));
     }

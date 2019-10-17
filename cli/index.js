@@ -11,14 +11,26 @@ const conf = require('./conf')
 const Store = require('./store')
 const Network = require('./network')
 const NetworkLogic = require('./network_logic')
+const DataStore = require('./datastore/datastore')
 
 const ExpressLogic = require('./express_logic')
 
 
-var store = new Store();
+var ds = new DataStore();
+var store = new Store(ds);
 var network = new Network(conf.servers);
 var nw_logic = new NetworkLogic(network, store);
 var ex_logic = new ExpressLogic(conf.port, nw_logic);
+
+
+
+var node = ds.node('asd')
+node.load()
+console.log(node.data);
+node.data.x = 50
+node.save()
+
+// console.log(ds._filehash(ds.adr('asd123asd')));
 
 
 // nats.subscribe('create_contract_req', function(msg) {
