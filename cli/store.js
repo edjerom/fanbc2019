@@ -35,6 +35,10 @@ module.exports = class {
         return this.path_txs + id + '_done.json';
     }
 
+    adr_txres(id){
+        return this.path_txs + id + '_result.json';
+    }    
+
     /**
      * Is contract available.
      * @param {Contract id} id 
@@ -67,8 +71,8 @@ module.exports = class {
         fs.renameSync(this.adr_ava(id), this.adr_ena(id));
     }
 
-    create_transaction(id, cid, args){
-        var tx = {txid: id, cid: cid, args: args}
+    create_transaction(id, cid, method, args){
+        var tx = {id, cid, method, args}
         fs.writeFileSync(this.adr_tx(id), JSON.stringify(tx));
     }
 
@@ -84,9 +88,21 @@ module.exports = class {
 
         var dsnode = this.ds.node(tx.cid)
 
-        transaction(this.adr_ena(tx.cid), tx.args, dsnode)
+    console.log('TX:', tx);
 
+        var res = transaction(this.adr_ena(tx.cid), tx.method, tx.args, dsnode)
+
+        // Сохраним результат работы
+        this.store_res(id, res)
         fs.renameSync(this.adr_tx(id), this.adr_txd(id));
+    }
+
+    store_res(txid, data){
+        fs.writeFileSync(this.adr_txres(txid), JSON.stringify(data));
+    }
+
+    get_txres(txid){
+        return JSON.parse(fs.readFileSync(this.adr_txres(txid)));
     }
 
     db_hash(){

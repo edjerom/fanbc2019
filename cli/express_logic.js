@@ -2,15 +2,16 @@ const express = require('express')
 const bodyParser = require('body-parser');
 
 module.exports = class {
-    constructor(port, network){
+    constructor(port, network, store){
         this.app = express();
         this.app.use(bodyParser.json());
 
         this.network = network;
-        // this.strore = store;
+        this.store = store;
 
         this.route_create();
         this.route_call();
+        this.route_result();
 
         this.app.listen(port);
     }
@@ -34,9 +35,18 @@ module.exports = class {
                 return res.send({success: false, message: "cid not defined"})
         
             // Send contract request to network.
-            var txid = this.network.request_call(req.body.params.cid, req.body.params.args);
+            var txid = this.network.request_call(req.body.params.cid, req.body.params.method, req.body.params.args);
         
             res.send({success: true, id: txid});
         });        
     }
+
+    route_result(){
+        this.app.post('/tx_result', (req, res) => {
+            if (!req.body.params.id)
+                return res.send({success: false, message: "id not defined"})
+        
+            res.send({success: true, data: this.store.get_txres(req.body.params.id)});
+        });        
+    }    
 }

@@ -64,9 +64,9 @@ module.exports = class {
         });
     }
 
-    request_call(cid, args) {
+    request_call(cid, method, args) {
         var id = this.gen_id();
-        this.network.send('call_contract_req', { txid: id, cid: cid, args: args });
+        this.network.send('call_contract_req', { txid: id, cid: cid, method: method, args: args });
         return id;
     }
 
@@ -75,7 +75,7 @@ module.exports = class {
             // Create contract and send approve (res) or reject (rej)
             console.log(msg.mac + ' wants call contract: ', msg.cid, msg);
 
-            this.store.create_transaction(msg.txid, msg.cid, msg.args);
+            this.store.create_transaction(msg.txid, msg.cid, msg.method, msg.args);
             this.network.send('call_contract_res', { txid: msg.txid });
         });
 
