@@ -76,6 +76,31 @@ module.exports = class {
         fs.writeFileSync(this.adr_tx(id), JSON.stringify(tx));
     }
 
+    contracts_list(){
+        var files = fs.readdirSync(this.path_ena)
+        return files.map(f => f.replace('.js', ''))
+    }
+
+    transactions_list(){
+        var files = fs.readdirSync(this.path_txs)
+        var ctrs = {}
+        files.map(f => {
+            f = f.replace('.json', '')
+            var parts = f.split('_')
+            var c = {id: parts[0], state: 'created'}
+            if (!ctrs[c.id]) ctrs[c.id] = c; else c = ctrs[c.id];
+
+            if (parts.length > 1){
+                if (parts[1] == 'done')
+                    c.state = 'done'
+                if (parts[1] == 'result')
+                    c.result = JSON.parse(fs.readFileSync(this.path_txs + f + '.json'))
+            }
+            return c;
+        })
+        return Object.values(ctrs)
+    }
+
     run_transaction(id){
         console.log("--- Executing transaction " + id);
         var tx = JSON.parse(fs.readFileSync(this.adr_tx(id)));
