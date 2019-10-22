@@ -1,5 +1,5 @@
 <template>
-	<div style="border: 1px solid #ff0">
+	<div class="form-div card-body">
 		<h3>Контракты</h3>
 		<div>
 			<div v-for="tr in contracts" :key="tr">{{tr}}</div>
@@ -7,21 +7,21 @@
 
 		<div>
 			<h3>Создание контракта</h3>
-			<div>
-				<textarea style="width: 50%; height: 50%;" placeholder="contract class code" v-model="contract_code"></textarea>
+			<div class="form-group-input form-input-box">
+				<textarea class="form-control" style="width: 50%; height: 20%;" placeholder="contract class code" v-model="contract_code"></textarea>
 			</div>
 			<div class="btn btn-sm btn-primary" @click="create_contract()">Создать</div> <span>{{created_contract}}</span>
 		</div>
 
 		<div>
 			<h3>Вызвать метод</h3>
-			<div>
+			<div  class="form-group-input form-input-box">
 				contract UID
-				<input style="width: 400px" v-model="cid" />
+				<input class="form-control" style="width: 400px" v-model="cid" />
 				<br />contract method
-				<input style="width: 400px" v-model="method" />
+				<input class="form-control" style="width: 400px" v-model="method" />
 				<br />arguments
-				<input style="width: 400px" v-model="params"/>
+				<input class="form-control" style="width: 400px" v-model="params"/>
 				<br />
                 <div class="btn btn-sm btn-primary" @click="execute_contract()">Запустить</div> <span>{{created_transaction}}</span>
 				<br />
