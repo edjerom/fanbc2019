@@ -14,6 +14,10 @@ module.exports = class {
           this.subscribe('connected', m => console.log('Connected:' + m.mac))
     }
 
+    gen_id() {
+        return this.mac + Date.now().toString().padStart(16, '0');
+    }
+
     send(ch, message){
         message.mac = this.mac;
         this.nats.publish(ch, message);

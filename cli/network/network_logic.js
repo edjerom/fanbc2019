@@ -1,3 +1,5 @@
+const Approve = require('./approve')
+
 module.exports = class {
     constructor(network, store) {
         this.network = network;
@@ -15,6 +17,27 @@ module.exports = class {
         this.sub_create();
         this.sub_call();
         this.sub_aftertx();
+
+        this.app_create_contract = new Approve(this.network, 'CREATE_CONTRACT', 
+            (msg) => {
+                // console.log('wants create contract: ');
+                this.store.create_contract(msg.id, msg.code);
+                return true;
+            },
+            (msg) => {
+                console.log('CREATE APPROVED 222');
+                if (this.store.is_ava(msg.id)){
+                    console.log('AND WILL BE ENABLED 222');
+                    this.store.enable_contract(msg.id);
+                    console.log('SUCCEFULLY 222');
+                }
+                console.log('creation contract ' + msg.id + ' APPROVED!');
+                return true;
+            })
+    }
+
+    create_contract(code){
+        return this.app_create_contract.send({code: code})
     }
 
     gen_id() {

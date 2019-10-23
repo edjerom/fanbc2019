@@ -9,8 +9,8 @@ var MAC = "";
 
 const conf = require('./conf')
 const Store = require('./store')
-const Network = require('./network')
-const NetworkLogic = require('./network_logic')
+const Network = require('./network/network')
+const NetworkLogic = require('./network/network_logic')
 const DataStore = require('./datastore/datastore')
 
 const ExpressLogic = require('./express_logic')

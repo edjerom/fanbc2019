@@ -49,7 +49,8 @@ module.exports = class {
                 return res.send({success: false, message: "param code not defined"})
         
             // Send contract request to network.
-            var cid = this.network.request_create(req.body.params.code);
+            // var cid = this.network.request_create(req.body.params.code);
+            var cid = this.network.create_contract(req.body.params.code);
         
             res.send({success: true, id: cid});
         });
