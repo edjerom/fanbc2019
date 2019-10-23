@@ -4,9 +4,10 @@ module.exports = class {
     constructor(network, store) {
         this.network = network;
         this.store = store;
+        this.nodes = [];
 
         // Сколько подтверждений надо получить чтобы считать что большинство за.
-        this.approves_min = 1;
+        this.approves_min = 10;
         // Сюда складываем подтверждения создания контрактов.
         this.create_approves = {};
         // Сюда складываем подтверждения вызова контрактов.
@@ -18,7 +19,7 @@ module.exports = class {
         this.sub_call();
         this.sub_aftertx();
 
-        this.app_create_contract = new Approve(this.network, 'CREATE_CONTRACT', 
+        this.app_create_contract = new Approve(this, 'CREATE_CONTRACT',
             (msg) => {
                 // console.log('wants create contract: ');
                 this.store.create_contract(msg.id, msg.code);
@@ -26,7 +27,7 @@ module.exports = class {
             },
             (msg) => {
                 console.log('CREATE APPROVED 222');
-                if (this.store.is_ava(msg.id)){
+                if (this.store.is_ava(msg.id)) {
                     console.log('AND WILL BE ENABLED 222');
                     this.store.enable_contract(msg.id);
                     console.log('SUCCEFULLY 222');
@@ -34,10 +35,31 @@ module.exports = class {
                 console.log('creation contract ' + msg.id + ' APPROVED!');
                 return true;
             })
+
+        this.app_ping = new Approve(this, 'PING',
+            (msg) => {
+                if (!this.nodes.includes(msg.mac)){
+                    this.nodes.push(msg.mac);
+                    this.approves_min = Math.floor(this.nodes.length / 2) + 1;
+                }
+                return true;
+            },
+            (msg) => {
+                return true;
+            })
+
+
+        this.ping()
     }
 
-    create_contract(code){
-        return this.app_create_contract.send({code: code})
+    ping(){
+        this.nodes = [];
+        this.approves_min = 2;
+        this.app_ping.send({})
+    }
+
+    create_contract(code) {
+        return this.app_create_contract.send({ code: code })
     }
 
     gen_id() {
