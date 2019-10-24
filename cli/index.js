@@ -5,8 +5,6 @@ const fs = require('fs')
 var app = express();
 app.use(bodyParser.json());
 
-var MAC = "";
-
 const conf = require('./conf')
 const Store = require('./store')
 const Network = require('./network/network')

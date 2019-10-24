@@ -26,10 +26,24 @@ module.exports = class {
     }
 
     node(id){
-            return new DSNode(this.adr(id))
+        return new DSNode(this.adr(id))
     }
 
     hash(id){
         return this._filehash(this.adr(id != null ? id : "current"))
     }
+
+    data_list(){
+        var files = fs.readdirSync(this.path)
+        return files.map(f => f.replace('.json', ''))
+    }
+
+    read_data(id){
+        var aaa = fs.readFileSync(this.adr(id)).toString();
+        return aaa
+    }
+
+    write_data(id, text){
+        fs.writeFileSync(this.adr(id), text);
+    }    
 }

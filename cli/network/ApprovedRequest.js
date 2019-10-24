@@ -1,9 +1,13 @@
+const md5 = require('md5')
+
 module.exports = class {
-    constructor(nw_logic, req, cb_req, cb_res) {
+    constructor(nw_logic, req, af, cb_req, cb_res) {
         this.nw_logic = nw_logic
         this.req = req
+        this.af = af
         this.cb_req = cb_req
         this.cb_res = cb_res
+        this.answers = {}
 
         // Сюда складываем подтверждения.
         this.approves = {};
@@ -11,7 +15,7 @@ module.exports = class {
         this.nw_logic.network.subscribe(req + '_req', (msg) => {
             console.log('Req ' + req + ' id:' + msg.id + ' requested by ' + msg.mac);
             if (this.cb_req(msg))
-                this.nw_logic.network.send(req + '_res', { id: msg.id });
+                this.nw_logic.network.send(req + '_res', msg);
             else
                 this.nw_logic.network.send(req + '_rej', { id: msg.id });
         });
@@ -25,20 +29,32 @@ module.exports = class {
 
             // die if there was approve from this mac
             if (this.approves[msg.id].includes(msg.mac)) return;
-
             this.approves[msg.id].push(msg.mac);
-// console.log(this.nw_logic.approves_min)
-            if (this.approves[msg.id].length < this.nw_logic.approves_min) return;
 
-            console.log('Req ' + req + ' id:' + msg.id + ' APPROVED!');
+            if (!this.answers[msg.id])
+                this.answers[msg.id] = [];
 
-            if (!this.cb_res(msg)) return;
+            var hash = md5(JSON.stringify(msg[af]))
+
+            if (!this.answers[msg.id][hash]) this.answers[msg.id][hash] = 0;
+            this.answers[msg.id][hash]++;
+
+            // console.log('AprReq ', this.answers);
+            if (this.answers[msg.id][hash] < this.nw_logic.approves_min) return;
+
+            console.log('AprReq ' + req + ' id:' + msg.id + ' APPROVED by 51%!');
+
+            this.cb_res(msg);
         });
     }
 
     send(data) {
+        console.log('AprReq ')
+        // this.approves = {}
+        // this.answers = {}
+
         data.id = this.nw_logic.network.gen_id();
-        console.log('Req ' + this.req + ' id:' + data.id + ' sended');
+        console.log('AprReq ' + this.req + ' id:' + data.id + ' sended');
         this.nw_logic.network.send(this.req + '_req', data);
         return data.id
     }

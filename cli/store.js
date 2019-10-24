@@ -71,10 +71,23 @@ module.exports = class {
         fs.renameSync(this.adr_ava(id), this.adr_ena(id));
     }
 
+    read_contract(id){
+        return fs.readFileSync(this.adr_ena(id)).toString();
+    }
+
     create_transaction(id, cid, method, args){
         var tx = {id, cid, method, args}
         fs.writeFileSync(this.adr_tx(id), JSON.stringify(tx));
     }
+
+    read_transaction(id){
+        return fs.readFileSync(this.adr_tx(id)).toString();
+    }
+
+    write_transaction(id, text){
+        fs.writeFileSync(this.adr_tx(id), text);
+    }
+
 
     contracts_list(){
         var files = fs.readdirSync(this.path_ena)
@@ -101,10 +114,27 @@ module.exports = class {
         return Object.values(ctrs)
     }
 
+    data_list(){
+        return this.ds.data_list();
+    }
+
+    read_data(id){
+        return this.ds.read_data(id)
+    }
+
+    write_data(id, text){
+        this.ds.write_data(id, text)
+    }
+
     run_transaction(id){
         console.log("--- Executing transaction " + id);
         var tx = JSON.parse(fs.readFileSync(this.adr_tx(id)));
         console.log(tx);
+
+        if (tx.done){
+            console.log('Transaction ' + id + ' already done.')
+            return false;
+        }
 
         if (!this.is_ena(tx.cid)){
             console.log('Contract ' + tx.cid + ' is not enabled.')
@@ -113,21 +143,20 @@ module.exports = class {
 
         var dsnode = this.ds.node(tx.cid)
 
-    console.log('TX:', tx);
+        console.log('TX:', tx);
 
         var res = transaction(this.adr_ena(tx.cid), tx.method, tx.args, dsnode)
 
         // Сохраним результат работы
-        this.store_res(id, res)
-        fs.renameSync(this.adr_tx(id), this.adr_txd(id));
+        tx.done = 1
+        tx.result = res
+        this.write_transaction(id, JSON.stringify(tx))
     }
 
-    store_res(txid, data){
-        fs.writeFileSync(this.adr_txres(txid), JSON.stringify(data));
-    }
-
-    get_txres(txid){
-        return JSON.parse(fs.readFileSync(this.adr_txres(txid)));
+    get_txres(id){
+        var tx_text = this.read_transaction(id)
+        var tx = JSON.parse(tx_text)
+        return tx.result
     }
 
     db_hash(){

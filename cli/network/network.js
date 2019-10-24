@@ -3,6 +3,7 @@ var address = require('address');
 
 module.exports = class {
     constructor(servers){
+        this.id = 0;
         this.nats = NATS.connect({'servers': servers, json: true});
 
         address.mac((err, addr) => {
@@ -15,7 +16,8 @@ module.exports = class {
     }
 
     gen_id() {
-        return this.mac + Date.now().toString().padStart(16, '0');
+        this.id = (this.id + 1) % 1000000
+        return this.mac + Date.now().toString().padStart(16, '0') + this.id.toString().padStart(6, '0');
     }
 
     send(ch, message){

@@ -1,4 +1,5 @@
 const Approve = require('./approve')
+const ApprovedRequest = require('./ApprovedRequest')
 
 module.exports = class {
     constructor(network, store) {
@@ -38,7 +39,7 @@ module.exports = class {
 
         this.app_ping = new Approve(this, 'PING',
             (msg) => {
-                if (!this.nodes.includes(msg.mac)){
+                if (!this.nodes.includes(msg.mac)) {
                     this.nodes.push(msg.mac);
                     this.approves_min = Math.floor(this.nodes.length / 2) + 1;
                 }
@@ -49,13 +50,85 @@ module.exports = class {
             })
 
 
+        // INIT_ASK -> net (все услышали и дают списки контр, транз, данных)
+        // INIT_ASK_CT(CTID) -> net (все дают контракт CTID в ответ)
+        // INIT_ASK_TX(TXID) -> net (все дают транзакцию TXID в ответ)
+        // INIT_ASK_DS(DSID) -> net (все дают блок данных DSID в ответ)
+
+        this.apr_init_ask_ct = new ApprovedRequest(this, 'INIT_ASK_CT', 'data',
+            (msg) => {
+                msg.data = this.store.read_contract(msg.did)
+                return msg;
+            },
+            (msg) => {
+                this.store.create_contract(msg.did, msg.data);
+                this.store.enable_contract(msg.did);
+                // console.log(msg)
+                return true;
+            })
+
+        this.apr_init_ask_tx = new ApprovedRequest(this, 'INIT_ASK_TX', 'data',
+            (msg) => {
+                msg.data = this.store.read_transaction(msg.did)
+                return msg;
+            },
+            (msg) => {
+                this.store.write_transaction(msg.did, msg.data);
+                // console.log(msg)
+                return true;
+            })
+
+            this.apr_init_ask_ds = new ApprovedRequest(this, 'INIT_ASK_DS', 'data',
+            (msg) => {                
+                msg.data = this.store.read_data(msg.did)
+                
+                return msg;
+            },
+            (msg) => {
+                this.store.write_data(msg.did, msg.data);
+                return true;
+            })
+
+
+        this.apr_init_ask = new ApprovedRequest(this, 'INIT_ASK', 'data',
+            (msg) => {
+                msg.data = {
+                    crs: this.store.contracts_list(),
+                    trs: this.store.transactions_list().map(tx => tx.id),
+                    dss: this.store.data_list()
+                }
+
+                return msg;
+            },
+            (msg) => {
+                for (var k in msg.data.crs) {
+                    this.apr_init_ask_ct.send({ did: msg.data.crs[k] })
+                }
+
+                for (var k in msg.data.trs) {
+                    this.apr_init_ask_tx.send({ did: msg.data.trs[k] })
+                }
+
+                for (var k in msg.data.dss) {
+                    this.apr_init_ask_ds.send({ did: msg.data.dss[k] })
+                }                
+
+                // console.log(msg)
+                return true;
+            })
+
         this.ping()
     }
 
-    ping(){
+    syncinit() {
+        this.apr_init_ask.send({})
+    }
+
+    ping() {
         this.nodes = [];
         this.approves_min = 2;
         this.app_ping.send({})
+        setTimeout(() => this.syncinit(), 1000)
     }
 
     create_contract(code) {
