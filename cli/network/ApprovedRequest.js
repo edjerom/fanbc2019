@@ -14,6 +14,12 @@ module.exports = class {
 
         this.nw_logic.network.subscribe(req + '_req', (msg) => {
             console.log('Req ' + req + ' id:' + msg.id + ' requested by ' + msg.mac);
+            if (this.nw_logic.network.mac == msg.mac)
+            {
+                console.log('Skip self');
+                return;
+            }
+
             if (this.cb_req(msg))
                 this.nw_logic.network.send(req + '_res', msg);
             else
@@ -23,6 +29,8 @@ module.exports = class {
         this.nw_logic.network.subscribe(req + '_res', (msg) => {
             // Create contract and send approve (res) or reject (rej)
             console.log('Req ' + req + ' id:' + msg.id + ' approved by ' + msg.mac);
+
+            if (this.nw_logic.network.mac == msg.mac) return;
 
             if (!this.approves[msg.id])
                 this.approves[msg.id] = [];
