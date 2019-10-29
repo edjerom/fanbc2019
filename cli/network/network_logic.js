@@ -42,6 +42,7 @@ module.exports = class {
                 if (!this.nodes.includes(msg.mac)) {
                     this.nodes.push(msg.mac);
                     this.approves_min = Math.floor(this.nodes.length / 2) + 1;
+                    console.log('approves_min:' + this.approves_min);
                 }
                 return true;
             },

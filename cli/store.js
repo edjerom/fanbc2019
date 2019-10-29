@@ -98,17 +98,23 @@ module.exports = class {
         var files = fs.readdirSync(this.path_txs)
         var ctrs = {}
         files.map(f => {
-            f = f.replace('.json', '')
-            var parts = f.split('_')
-            var c = {id: parts[0], state: 'created'}
+            var id = f.replace('.json', '')
+            var tx = JSON.parse(this.read_transaction(id))
+            // console.log(tx)
+
+            // var parts = f.split('_')
+            // var c = {id: parts[0], state: 'created'}
+            var c = {id: id, state: tx.done ? 'done' : 'created'}
             if (!ctrs[c.id]) ctrs[c.id] = c; else c = ctrs[c.id];
 
-            if (parts.length > 1){
-                if (parts[1] == 'done')
-                    c.state = 'done'
-                if (parts[1] == 'result')
-                    c.result = JSON.parse(fs.readFileSync(this.path_txs + f + '.json'))
-            }
+            c.result = tx.result;
+
+            // if (parts.length > 1){
+            //     if (parts[1] == 'done')
+            //         c.state = 'done'
+            //     if (parts[1] == 'result')
+            //         c.result = JSON.parse(fs.readFileSync(this.path_txs + f + '.json'))
+            // }
             return c;
         })
         return Object.values(ctrs)
