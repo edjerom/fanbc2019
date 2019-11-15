@@ -8,9 +8,10 @@ const ARStack = require('./ARStack')
 
 module.exports = class {
     constructor(network, store) {
-        this.network = network;
         this.store = store;
         this.nodes = new NodePool(this.store);
+
+        this.network = network;
 
         this.contracts = new Contracts(store)
         this.transactions = new Transactions(store, this.contracts)
@@ -37,6 +38,7 @@ module.exports = class {
     }
 
     _subscribe(){
+        this.network.cipher = this.nodes.node
         console.log('Subscribing')
         this.syncinit();
     }

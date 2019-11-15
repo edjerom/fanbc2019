@@ -5,6 +5,8 @@ var ID = require('../core/misc/id')
 
 module.exports = class {
     constructor(servers, subnet){
+        this.cipher = null
+
         this.mac = require('node-getmac').replace(/[-:]/g, '').toLowerCase()
 
         this.subnet = subnet;
@@ -22,11 +24,23 @@ module.exports = class {
         message = message || {}
         message.mac = this.mac;
         message.id = message.id || this.gen_id()
-        this.nats.publish(this.subnet + "." + ch, message);
+
+        this.nats.publish(this.subnet + "." + ch, this.cipher ? this.cipher.encrypt(message) : message);
         return message
     }
 
     subscribe(ch, cb){
-        this.nats.subscribe(this.subnet + "." + ch, cb);
+        if (this.cipher)
+        {
+            var cb2 = msg => {
+                var enc = this.cipher.decrypt(msg)
+                cb(enc)
+            }
+            this.nats.subscribe(this.subnet + "." + ch, cb2);
+        }
+        else
+        {
+            this.nats.subscribe(this.subnet + "." + ch, cb);
+        }
     }
 }
