@@ -1,31 +1,32 @@
+/** Модуль отвечает за подключение к сети, отправку данных в сеть и прием данных из сети. */
+
 var NATS = require('nats');
-var address = require('address');
+var ID = require('../core/misc/id')
 
 module.exports = class {
-    constructor(servers){
-        this.id = 0;
+    constructor(servers, subnet){
+        this.mac = require('node-getmac').replace(/[-:]/g, '').toLowerCase()
+
+        this.subnet = subnet;
         this.nats = NATS.connect({'servers': servers, json: true});
 
-        address.mac((err, addr) => {
-            this.mac = addr.replace(/:/g, '');
-            console.log('my mac is', this.mac)
-            this.send('connected', {})
-          });
-
-          this.subscribe('connected', m => console.log('Connected:' + m.mac))
+        this.subscribe('connected', m => console.log('Connected: ' + m.mac))
+        this.send('connected')            
     }
-
+   
     gen_id() {
-        this.id = (this.id + 1) % 1000000
-        return this.mac + Date.now().toString().padStart(16, '0') + this.id.toString().padStart(6, '0');
+        return ID.next()
     }
 
     send(ch, message){
+        message = message || {}
         message.mac = this.mac;
-        this.nats.publish(ch, message);
+        message.id = message.id || this.gen_id()
+        this.nats.publish(this.subnet + "." + ch, message);
+        return message
     }
 
     subscribe(ch, cb){
-        this.nats.subscribe(ch, cb);
+        this.nats.subscribe(this.subnet + "." + ch, cb);
     }
 }

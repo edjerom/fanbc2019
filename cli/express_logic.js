@@ -2,13 +2,13 @@ const express = require('express')
 const bodyParser = require('body-parser');
 
 module.exports = class {
-    constructor(port, network, store){
+    constructor(port, nl, store){
         this.app = express();
         this.app.use(bodyParser.json());
 
         this.app.use(express.static('./gui'))
 
-        this.network = network;
+        this.nl = nl;
         this.store = store;
 
         this.route_create();
@@ -23,7 +23,7 @@ module.exports = class {
     route_contracts_list(){
         this.app.post('/api/list_contracts', (req, res) => {
             // Send contract request to network.
-            var ctrs = this.store.contracts_list()
+            var ctrs = this.nl.contracts.store_ena.files()
         
             // console.log(req.body)
             res.send({success: true, data: ctrs});
@@ -33,7 +33,8 @@ module.exports = class {
     route_transactions_list(){
         this.app.post('/api/list_transactions', (req, res) => {
             // Send contract request to network.
-            var ctrs = this.store.transactions_list()
+            var files = this.nl.transactions.store.files()
+            var ctrs = files.map(f => this.nl.transactions.store.load(f))
         
             // console.log(req.body)
             res.send({success: true, data: ctrs});
@@ -50,7 +51,7 @@ module.exports = class {
         
             // Send contract request to network.
             // var cid = this.network.request_create(req.body.params.code);
-            var cid = this.network.create_contract(req.body.params.code);
+            var cid = this.nl.create_contract(req.body.params.code);
         
             res.send({success: true, id: cid});
         });
@@ -62,7 +63,7 @@ module.exports = class {
                 return res.send({success: false, message: "cid not defined"})
         
             // Send contract request to network.
-            var txid = this.network.request_call(req.body.params.cid, req.body.params.method, req.body.params.args);
+            var txid = this.nl.create_transaction(req.body.params.cid, req.body.params.method, req.body.params.args);
         
             res.send({success: true, id: txid});
         });        

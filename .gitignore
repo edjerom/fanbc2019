@@ -1,4 +1,4 @@
-
+cli/_store
 cli/node_modules
 cli/package-lock.json
 cli/contracts
