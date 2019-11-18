@@ -9,8 +9,6 @@ var store = new Store();
 var network = new Network(conf.servers);
 require('./core/misc/id').init(network.mac)
 
-// return;
-// return;
 var nw_logic = new NetworkLogic(network, store);
 
 var ex_logic = new ExpressLogic(conf.port, nw_logic, store);
