@@ -5,12 +5,12 @@ module.exports = class {
 
         this.network.subscribe('DISCOVER_REQ', msg => {
             // discover network at least 10 sec
-            this.network.send('DISCOVER_RES', {mac: this.network.mac, decKey: this.pool.node.decKey })
+            this.network.send('DISCOVER_RES', {mac: this.network.mac, decKey: this.pool.decKey })
         })
 
         // discover network min 10 sec
         this.network.subscribe('DISCOVER_RES', msg => {
-            this.pool.append(msg.mac, msg.decKey)
+            this.pool.append(msg.mac, null, msg.decKey)
         })        
     }
 

@@ -9,14 +9,14 @@ module.exports = class {
         this.cb_res = cb_res
         this.answers = {}
 
-        this.skip_self = false
+        this.skip_self = true
 
         // Сюда складываем подтверждения.
         this.approves = {};
 
         this.nw_logic.network.subscribe(req + '_req', (msg) => {
             console.log('Req ' + req + ' id:' + msg.id + ' requested by ' + msg.mac);
-            if (this.skip_self && this.nw_logic.network.mac == msg.mac)
+            if (this.skip_self && this.nw_logic.mac == msg.mac)
             {
                 console.log('Skip self');
                 return;
@@ -31,8 +31,9 @@ module.exports = class {
         this.nw_logic.network.subscribe(req + '_res', (msg) => {
             // Create contract and send approve (res) or reject (rej)
             console.log('Req ' + req + ' id:' + msg.id + ' approved by ' + msg.mac);
+            // console.log('+MAC:' + this.nw_logic.mac);
 
-            if (this.skip_self && this.nw_logic.network.mac == msg.mac){
+            if (this.skip_self && this.nw_logic.mac == msg.mac){
                 console.log('Skip self');
                 return;
             } 
@@ -52,6 +53,8 @@ module.exports = class {
             if (!this.answers[msg.id][hash]) this.answers[msg.id][hash] = 0;
             this.answers[msg.id][hash]++;
 
+
+            console.log('#this.nw_logic.approves_min', this.nw_logic.approves_min)
             if (this.answers[msg.id][hash] < this.nw_logic.approves_min) return;
 
             console.log('AprReq ' + req + ' id:' + msg.id + ' APPROVED by 51%!');
@@ -62,7 +65,7 @@ module.exports = class {
 
     send(data) {
         data = data || {};
-        this.nw_logic.network.send(this.req + '_req', data);
+        data = this.nw_logic.network.send(this.req + '_req', data);
         console.log('AprReq ' + this.req + ' id:' + data.id + ' sended');
         return data
     }

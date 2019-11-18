@@ -1,17 +1,25 @@
 /** Модуль объеденяет всю сетевую логику, но не исполняет ее. */
 
-const NodePool = require('./node_pool')
+const NetworkCipher = require('./cipher/NetworkCipher')
+const Keystore = require('./cipher/keystore')
+
 const NetworkDiscover = require('./NetworkDiscover')
 const Contracts = require('../contracts')
 const Transactions = require('../transactions')
 const ARStack = require('./ARStack')
 
+
 module.exports = class {
     constructor(network, store) {
         this.store = store;
-        this.nodes = new NodePool(this.store);
+        this.mac = network.mac
+        // this.nodes = new NodePool(this.store);
 
-        this.network = network;
+        this.keystore = new Keystore(store, network.mac)
+        // keystore.append(this.network.mac, this.nodes.node)
+        this.transport = new NetworkCipher(network, this.keystore)
+
+        this.network = this.transport;
 
         this.contracts = new Contracts(store)
         this.transactions = new Transactions(store, this.contracts)
@@ -33,18 +41,19 @@ module.exports = class {
         // Сколько подтверждений надо получить чтобы считать что большинство за (временно).
         this.approves_min = 10;
 
-        var nd = new NetworkDiscover(this.network, this.nodes)
+        var nd = new NetworkDiscover(this.network.network, this.keystore)
         return nd.discover()
     }
 
     _subscribe(){
-        this.network.cipher = this.nodes.node
+        // this.network.cipher = this.nodes.node
         console.log('Subscribing')
         this.syncinit();
     }
 
     syncinit() {
-        this.approves_min = this.nodes.approves_min() //Math.floor(this.nodes.length / 2) + 1;
+        // this.approves_min = this.nodes.approves_min() //Math.floor(this.nodes.length / 2) + 1;
+        this.approves_min = this.keystore.quorum()
         this.buildAR('INIT').send()
     }
 
