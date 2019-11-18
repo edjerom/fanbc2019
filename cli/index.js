@@ -12,5 +12,5 @@ require('./core/misc/id').init(network.mac)
 // return;
 // return;
 var nw_logic = new NetworkLogic(network, store);
-return;
+
 var ex_logic = new ExpressLogic(conf.port, nw_logic, store);
