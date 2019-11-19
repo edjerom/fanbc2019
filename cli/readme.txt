@@ -58,4 +58,12 @@ POST /api/tx_result
 {sucess: true, data: "Результат выполнения транзакции"}
 
 
+--- Получить список узлов сети
+POST /api/sys/nodes
+{}
+
+Ответ:
+{sucess: true, data: ["MAC", "MAC", ...]}
+
+
 Демонстрационная консоль находится по адресу http://host:port/  (http://localhost:3000)
