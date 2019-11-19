@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pkg": "pkg -t=node10-win-x64 index.js"
+    "pkg": "pkg -t=node10-win-x64 index.js",
+    "start": "node index.js",
+    "install": "pm2 start -n fanbc index.js",
+    "uninstall": "pm2 delete fanbc"
   },
   "keywords": [],
   "author": "",

@@ -104,7 +104,7 @@ module.exports = {
 		execute_contract() {
 			axios
 				.post(this.$conf.api_url + "call_contract", {
-					params: { cid: this.cid, method: this.method }
+					params: { cid: this.cid, method: this.method, args: this.params }
 				})
 				.then(res => {
 					console.log(res);

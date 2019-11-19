@@ -5,7 +5,9 @@ var ID = require('../core/misc/id')
 
 module.exports = class {
     constructor(servers, subnet){
-        this.mac = require('node-getmac').replace(/[-:]/g, '').toLowerCase() + Math.random()
+        this.mac = require('node-getmac').replace(/[-:]/g, '').toLowerCase() + Math.round(Math.random()*9999).toString().padStart(4, '0')
+
+        console.log('#mymac:', this.mac)
 
         this.subnet = subnet;
         this.nats = NATS.connect({'servers': servers, json: true});

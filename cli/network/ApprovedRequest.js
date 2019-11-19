@@ -54,7 +54,7 @@ module.exports = class {
             this.answers[msg.id][hash]++;
 
 
-            console.log('#this.nw_logic.approves_min', this.nw_logic.approves_min)
+            // console.log('#this.nw_logic.approves_min', this.nw_logic.approves_min)
             if (this.answers[msg.id][hash] < this.nw_logic.approves_min) return;
 
             console.log('AprReq ' + req + ' id:' + msg.id + ' APPROVED by 51%!');
