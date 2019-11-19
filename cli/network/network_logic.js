@@ -55,6 +55,7 @@ module.exports = class {
 
     syncinit() {
         // this.approves_min = this.nodes.approves_min() //Math.floor(this.nodes.length / 2) + 1;
+        console.log('#Quorum:', this.keystore.quorum())
         this.approves_min = this.keystore.quorum()
         this.buildAR('INIT').send()
     }
