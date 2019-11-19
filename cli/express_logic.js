@@ -76,5 +76,13 @@ module.exports = class {
         
             res.send({success: true, data: this.store.get_txres(req.body.params.id)});
         });        
-    }    
+    }
+
+    route_result(){
+        this.app.post('/api/sys/nodes', (req, res) => {
+            res.send({success: true, data: Object.keys(this.nl.keystore.keys)});
+        });        
+    }
+    
+    
 }
