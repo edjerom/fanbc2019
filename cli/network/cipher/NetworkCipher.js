@@ -14,7 +14,6 @@ module.exports = class {
 
     subscribe(ch, cb) {
         var cb2 = msg => {
-            console.log('#Cipher.cb2', msg)
             var id = msg.id
             var mac = msg.mac
 

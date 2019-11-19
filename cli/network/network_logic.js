@@ -29,12 +29,12 @@ module.exports = class {
     }
 
     create_contract(code){
-        return this.buildAR('CREATE_CONTRACT').send({data: {code}}).id
+        return this.buildAR('CREATE_CONTRACT').send({data: {code}}, true).id
     }
 
     create_transaction(cid, method, args){
-        var msg = this.buildAR('CREATE_TRANSACTION').send({data: {cid, method, args}})
-        this.transactions.create_transaction(msg.id, cid, method, args);
+        var msg = this.buildAR('CREATE_TRANSACTION').send({data: {cid, method, args}}, true)
+        // this.transactions.create_transaction(msg.id, cid, method, args);
         return msg.ic
     }
 

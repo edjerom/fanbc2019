@@ -54,7 +54,7 @@ module.exports = class {
             this.answers[msg.id][hash]++;
 
 
-            console.log('#this.answers', this.answers)
+            // console.log('#this.answers', this.answers)
             // console.log('#this.nw_logic.approves_min', this.nw_logic.approves_min)
             if (this.answers[msg.id][hash] < this.nw_logic.approves_min) return;
 
@@ -64,9 +64,16 @@ module.exports = class {
         });
     }
 
-    send(data) {
+    send(data, send_self) {
         data = data || {};
+        var dec = data
         data = this.nw_logic.network.send(this.req + '_req', data);
+        dec.id = data.id
+        dec.mac = data.mac
+        if (send_self){
+            this.cb_req(dec, this.nw_logic)
+        }
+
         console.log('AprReq ' + this.req + ' id:' + data.id + ' sended');
         return data
     }

@@ -1,7 +1,5 @@
-const fs = require('fs')
-
 function do_transaction(path, method, args, ds){
-    console.log('patyh is:', path );
+    console.log('path is:', path );
         var ctr = require(path)
         console.log(ctr);
         var c = new ctr();

@@ -17,7 +17,6 @@ module.exports = class {
 
         for (var k in this.ars){
             var ar = this.ars[k]
-            console.log("#ARStack. sub:", k, ar)
             this._hash[k] = new ApprovedRequest(this.nl, k, "", ar.requested, ar.approved)
         }
     }
@@ -27,8 +26,6 @@ module.exports = class {
             console.log('ERROR. ARStack. Module not difined in constructor. ', name)
             return null;
         }
-
-        console.log('#ARStack. buildAR', name)
 
         if (!this._hash[name])
         {
