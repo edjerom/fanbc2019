@@ -15,8 +15,9 @@ module.exports = class {
         this.ars['CREATE_CONTRACT'] = require('./requests/CREATE_CONTRACT')
         this.ars['CREATE_TRANSACTION'] = require('./requests/CREATE_TRANSACTION')
 
-        for (var k in this.args){
-            var ar = this.args[k]
+        for (var k in this.ars){
+            var ar = this.ars[k]
+            console.log("#ARStack. sub:", k, ar)
             this._hash[k] = new ApprovedRequest(this.nl, k, "", ar.requested, ar.approved)
         }
     }
