@@ -6,10 +6,10 @@ module.exports = class {
         this.keystore = keystore
     }
 
-    send(ch, message, skip_self) {
+    send(ch, message) {
         message = message || {}
         var enc = this.keystore.encrypt(message)
-        return this.network.send(ch, {id: message.id, _enc: enc }, skip_self)
+        return this.network.send(ch, {id: message.id, _enc: enc })
     }
 
     subscribe(ch, cb) {

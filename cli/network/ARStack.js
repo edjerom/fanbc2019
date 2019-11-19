@@ -14,6 +14,11 @@ module.exports = class {
         this.ars['INIT_TX'] = require('./requests/INIT_TX')
         this.ars['CREATE_CONTRACT'] = require('./requests/CREATE_CONTRACT')
         this.ars['CREATE_TRANSACTION'] = require('./requests/CREATE_TRANSACTION')
+
+        for (var k in this.args){
+            var ar = this.args[k]
+            this._hash[k] = new ApprovedRequest(this.nl, k, "", ar.requested, ar.approved)
+        }
     }
 
     buildAR(name){
@@ -22,8 +27,11 @@ module.exports = class {
             return null;
         }
 
+        console.log('#ARStack. buildAR', name)
+
         if (!this._hash[name])
         {
+            console.log('#ARStack. added to hash', name)
             var ar = this.ars[name] // require(__dirname + '/requests/' + name + '.js')
             this._hash[name] = new ApprovedRequest(this.nl, name, "", ar.requested, ar.approved)
         }
