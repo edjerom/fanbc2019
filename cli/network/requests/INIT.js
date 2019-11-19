@@ -10,7 +10,7 @@ module.exports = {
     },
 
     approved(msg, nl){
-        // console.log('#init approved as ', msg)
+        console.log('#init approved as ', msg)
         for (var k in msg.data.crs){
             nl.buildAR('INIT_CT').send({did: msg.data.crs[k]})
         }        
