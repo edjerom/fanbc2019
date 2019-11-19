@@ -72,6 +72,7 @@ module.exports = class {
         dec.mac = data.mac
         if (send_self){
             this.cb_req(dec, this.nw_logic)
+            this.nw_logic.network.send(this.req + '_res', dec);
         }
 
         console.log('AprReq ' + this.req + ' id:' + data.id + ' sended');
