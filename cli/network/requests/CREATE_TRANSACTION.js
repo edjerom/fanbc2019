@@ -5,7 +5,7 @@ module.exports = {
     },
 
     approved(msg, nl){
-        nl.transactions.run_transaction(msg.id)
+        nl.buildAR('RUN_TRANSACTION').send({id: msg.id, data: {txid:msg.id}}, true)
         return true;
     }
 }

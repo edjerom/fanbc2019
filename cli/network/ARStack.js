@@ -14,6 +14,7 @@ module.exports = class {
         this.ars['INIT_TX'] = require('./requests/INIT_TX')
         this.ars['CREATE_CONTRACT'] = require('./requests/CREATE_CONTRACT')
         this.ars['CREATE_TRANSACTION'] = require('./requests/CREATE_TRANSACTION')
+        this.ars['RUN_TRANSACTION'] = require('./requests/RUN_TRANSACTION')
 
         for (var k in this.ars){
             var ar = this.ars[k]
