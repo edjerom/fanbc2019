@@ -49,7 +49,8 @@ module.exports = class {
     }
 
     quorum(){
-         return this.count < 3 ? 1 : Math.floor(this.count / 2) + 1;
+         // return this.count < 2 ? 0 : this.count < 3 ? 1 : Math.floor(this.count / 2) + 1;
+         return Math.floor(this.count / 2) + 1;
     }
 
     encrypt(data) {

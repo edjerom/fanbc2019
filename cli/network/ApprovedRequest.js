@@ -9,7 +9,7 @@ module.exports = class {
         this.cb_res = cb_res
         this.answers = {}
 
-        this.skip_self = true
+        // this.skip_self = true
 
         // Сюда складываем подтверждения.
         this.approves = {};
@@ -75,7 +75,7 @@ module.exports = class {
             this.nw_logic.network.send(this.req + '_res', dec);
         }
 
-        console.log('AprReq ' + this.req + ' id:' + data.id + ' sended');
+        console.log('AprReq ' + this.req + ' id:' + data.id + ' sended send_self:' + send_self);
         return data
     }
 }

@@ -26,7 +26,7 @@ var Store = class {
 
     
     load_raw(name) {
-        return fs.readFileSync(this.path(name)).toString();
+        return fs.existsSync(this.path(name)) ? fs.readFileSync(this.path(name)).toString() : "";
     }
 
     save_raw(name, data) {

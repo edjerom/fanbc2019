@@ -5,7 +5,7 @@ var ID = require('../core/misc/id')
 
 module.exports = class {
     constructor(servers, subnet){
-        this.mac = require('node-getmac').replace(/[-:]/g, '').toLowerCase() + Math.round(Math.random()*9999).toString().padStart(4, '0')
+        this.mac = require('./misc/getmac')().replace(/[-:]/g, '').toLowerCase() + Math.round(Math.random()*9999).toString().padStart(4, '0')
 
         console.log('#mymac:', this.mac)
 
