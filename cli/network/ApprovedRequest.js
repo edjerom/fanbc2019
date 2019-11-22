@@ -38,6 +38,11 @@ module.exports = class {
                 return;
             } 
 
+            if (this.approves[msg.id] == 'done'){
+                console.log('Request ' + msg.id + ' already done');
+                return;
+            }
+
             if (!this.approves[msg.id])
                 this.approves[msg.id] = [];
 
@@ -53,10 +58,10 @@ module.exports = class {
             if (!this.answers[msg.id][hash]) this.answers[msg.id][hash] = 0;
             this.answers[msg.id][hash]++;
 
-
             // console.log('#this.answers', this.answers)
             // console.log('#this.nw_logic.approves_min', this.nw_logic.approves_min)
             if (this.answers[msg.id][hash] < this.nw_logic.approves_min) return;
+            this.approves[msg.id] = 'done';
 
             console.log('AprReq ' + req + ' id:' + msg.id + ' APPROVED by 51%!');
             delete msg.mac
@@ -72,7 +77,7 @@ module.exports = class {
         dec.mac = data.mac
         if (send_self){
             this.cb_req(dec, this.nw_logic)
-            this.nw_logic.network.send(this.req + '_res', dec);
+            this.nw_logic.network.send(this.req + '_res', dec);           
         }
 
         console.log('AprReq ' + this.req + ' id:' + data.id + ' sended send_self:' + send_self);

@@ -20,10 +20,33 @@ module.exports = class {
     constructor(store, contracts){
         this.store = store.sub('transactions')
         this.contracts = contracts
+        this.last = null
+
+        // Search last tx
+        var files = this.store.files()
+        if (files.length == 0) return;
+        var cur = files[0]
+        for (var i = 0; i < files.length; i++){
+            var tx = this.store.load(cur)
+            if (!tx.next){
+                this.last = tx
+                break;
+            }
+        }
+            console.log(this.last)
     }
 
     create_transaction(id, cid, method, args){
+        // if (this.last){
+        //     this.last.next = id
+        //     this.store.save(this.last.id, this.last)
+        // }
         var tx = {id, cid, method, args, state: 'created'}
+        // if (this.last)
+        //     tx.prev = this.last.id
+
+//        this.last = tx
+
         this.store.save(id, tx)
     }
 

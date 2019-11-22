@@ -1,0 +1,10 @@
+.toolbar__search__start {
+	-webkit-transition: color .3s;
+    transition: color .3s;
+    cursor: pointer;
+    position: absolute;
+    top: 1.2rem;
+    right: 1.8rem;
+    font-size: 2rem;
+    color: rgba(255,255,255,.85);
+}

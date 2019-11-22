@@ -18,4 +18,8 @@ module.exports = class {
         this.store_ena.save_raw(id, code)
         this.store_ava.drop(id)
     }
+
+    data(id){
+        return this.store_data.load(id)
+    }
 }

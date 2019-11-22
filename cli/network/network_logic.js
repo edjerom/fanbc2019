@@ -35,7 +35,7 @@ module.exports = class {
     create_transaction(cid, method, args){
         var msg = this.buildAR('CREATE_TRANSACTION').send({data: {cid, method, args}}, true)
         // this.transactions.create_transaction(msg.id, cid, method, args);
-        return msg.ic
+        return msg.id
     }
 
     _discover(){

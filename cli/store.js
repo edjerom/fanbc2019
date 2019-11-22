@@ -20,13 +20,13 @@ var Store = class {
         return this._path + name;
     }
 
-    drop(name){
+    drop(name) {
         fs.unlinkSync(this.path(name))
     }
 
-    
+
     load_raw(name) {
-        return fs.existsSync(this.path(name)) ? fs.readFileSync(this.path(name)).toString() : "";
+        return fs.existsSync(this.path(name)) ? fs.readFileSync(this.path(name)).toString() : "{}";
     }
 
     save_raw(name, data) {

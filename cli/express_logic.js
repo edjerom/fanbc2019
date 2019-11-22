@@ -7,6 +7,7 @@ module.exports = class {
         this.app.use(bodyParser.json());
 
         this.app.use(express.static('./gui'))
+        this.app.use('/mfc', express.static('./gui_mfc'))
 
         this.nl = nl;
         this.store = store;
@@ -16,6 +17,14 @@ module.exports = class {
         this.route_result();
         this.route_transactions_list();
         this.route_contracts_list();
+
+        this.app.post('/api/sys/nodes', (req, res) => {
+            res.send({success: true, data: Object.keys(this.nl.keystore.keys)});
+        });        
+
+        this.app.post('/api/data/:id', (req, res) => {
+            res.send({success: true, data: this.nl.contracts.data(req.params.id)});
+        });       
 
         this.app.listen(port);
     }
@@ -77,12 +86,4 @@ module.exports = class {
             res.send({success: true, data: this.store.get_txres(req.body.params.id)});
         });        
     }
-
-    route_result(){
-        this.app.post('/api/sys/nodes', (req, res) => {
-            res.send({success: true, data: Object.keys(this.nl.keystore.keys)});
-        });        
-    }
-    
-    
 }
