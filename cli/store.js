@@ -1,4 +1,7 @@
 const fs = require('fs')
+const bigInt = require('big-integer')
+const md5file = require('md5-file')
+const md5 = require('md5')
 
 var Store = class {
     constructor(name, path) {
@@ -64,7 +67,31 @@ var Store = class {
     }
 
     db_hash() {
-        return '123456789';
+        var ents = fs.readdirSync(this._path, {withFileTypes: true})
+        var dirs = ents.filter(d => d.isDirectory()) 
+        var dirs = ents.filter(d => !d.isDirectory())
+
+
+
+
+        // return (bi1 + bi2).toString(36)
+
+        return md5(this._dir_hash(this._path).toString(36))
+        // return fs.readdirSync(this._path)
+        // return '123456789';
+    }
+
+    _dir_hash(dir, skip){
+        var skip = ['keys']
+        var ents = fs.readdirSync(dir, {withFileTypes: true}).filter(x => !skip.includes(x.name))
+        var dirs = ents.filter(d => d.isDirectory()) 
+        var files = ents.filter(d => !d.isDirectory())
+
+        var fh = files.reduce((sum, f) => { sum += bigInt(md5file.sync(dir + f.name), 36); return sum }, bigInt(0, 36))
+        var dh = dirs.reduce((sum, f) => { sum += this._dir_hash(dir + f.name + '/'); return sum }, bigInt(0, 36))
+
+        // console.log(files)
+        return fh + dh
     }
 }
 

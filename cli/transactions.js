@@ -18,6 +18,8 @@ function do_transaction(path, method, args, ds){
 
 module.exports = class {
     constructor(store, contracts){
+        this.pstore = store
+        this.bstore = store.sub('blocks')
         this.store = store.sub('transactions')
         this.contracts = contracts
         this.last = null
@@ -81,7 +83,14 @@ module.exports = class {
         return tx.result
     }
 
-    db_hash(){
-        return '123456789';
+    snapshot(){
+        var zipFolder = require('zip-folder');
+        zipFolder(this.pstore._path, this.bstore._path + '/' + Date.now() + '.zip', function(err) {
+            if(err) {
+                console.log('oh no!', err);
+            } else {
+                console.log('EXCELLENT');
+            }
+        });
     }
 }

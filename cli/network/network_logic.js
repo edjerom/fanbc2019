@@ -26,6 +26,8 @@ module.exports = class {
         this.arstack = new ARStack(this)
 
         this._discover().then(() => this._subscribe());
+
+        setInterval(() => this.transactions.snapshot(), 1000 * 60 * 60 * 24)
     }
 
     create_contract(code){
